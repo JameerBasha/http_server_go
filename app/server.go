@@ -46,8 +46,9 @@ func processHeaders(content string) []ownHeader {
 
 func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 	response := []byte("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + fmt.Sprint(len(fileContent)) + "\r\n\r\n")
-	response = append(response, fileContent...)
+	// response = append(response, fileContent...)
 	conn.Write(response)
+	conn.Write(fileContent)
 	conn.Close()
 }
 
