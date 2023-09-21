@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"path/filepath"
@@ -11,6 +10,8 @@ import (
 	"net"
 	"os"
 )
+
+var directory string = ""
 
 func sendResponseAndCloseConnection(conn net.Conn, content string) {
 	conn.Write([]byte(content))
@@ -53,13 +54,14 @@ func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 	conn.Close()
 }
 
-var directory string
+// var directory string
 
-func getDirectoryPath() {
-	curr := flag.String("directory", "", "Pass directory")
-	flag.Parse()
-	directory = *curr
-}
+// func getDirectoryPath() {
+// 	curr := flag.String("directory", "", "Pass directory")
+// 	flag.Parse()
+// 	directory = *curr
+// 	fmt.Println(directory)
+// }
 
 func respondWithFile(fileName string, conn net.Conn) {
 	// directory := os.Args('')
@@ -121,7 +123,13 @@ func main() {
 
 	// Uncomment this block to pass the first stage
 
-	getDirectoryPath()
+	fmt.Println(os.Args)
+	if len(os.Args) > 1 && os.Args[1] == "--directory" {
+		directory = os.Args[2]
+		fmt.Println("directory", directory)
+	}
+
+	// getDirectoryPath()
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
