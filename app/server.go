@@ -54,15 +54,6 @@ func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 	conn.Close()
 }
 
-// var directory string
-
-// func getDirectoryPath() {
-// 	curr := flag.String("directory", "", "Pass directory")
-// 	flag.Parse()
-// 	directory = *curr
-// 	fmt.Println(directory)
-// }
-
 func respondWithFile(fileName string, conn net.Conn) {
 	// directory := os.Args('')
 	// filepath := filepath.Join(directory + fileName)
@@ -83,10 +74,6 @@ func writeFile(fileName string, conn net.Conn, buff []byte) {
 }
 
 func getRequestBody(buff []byte) []byte {
-	// requestContent := strings.Split(string(buff[:]).split("\n\n"))
-	// newline := 00001010
-	// newline := []byte("\n")
-	// print(string(buff))
 	data := bytes.Split(buff, []byte("\r\n\r\n"))[1]
 	for i := 0; i < len(data); i++ {
 		if data[i] == byte(0) {
@@ -94,20 +81,10 @@ func getRequestBody(buff []byte) []byte {
 		}
 	}
 	return bytes.Split(data, []byte(""))[0]
-	// for i := 0; i < len(buff); i++ {
-	// 	curr := buff[i : i+1]
-	// 	if curr == newline {
-	// 		print(string(buff[i:]))
-	// 		panic(newline)
-	// 		return buff[i:]
-	// 	}
-	// }
-	panic("ERROR")
 }
 
 func processRequest(conn net.Conn) {
 	buff := make([]byte, 10000)
-	// var buff []byte
 	_, err := conn.Read(buff)
 	requestContent := strings.Split(string(buff[:]), " ")
 	headers := processHeaders(string(buff[:]))
@@ -154,14 +131,8 @@ func processRequest(conn net.Conn) {
 }
 
 func main() {
-	// You can use print statements as follows for debugging, they'll be visible when running tests.
-
-	// Uncomment this block to pass the first stage
-
-	// fmt.Println("PATHS", os.Args)
 	if len(os.Args) > 1 && os.Args[1] == "--directory" {
 		directory = os.Args[2]
-		// fmt.Println("directory", directory)
 	}
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
