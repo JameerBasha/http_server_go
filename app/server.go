@@ -54,7 +54,7 @@ func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 
 func getDirectoryPath() string {
 	directory := flag.String("directory", "", "Pass directory")
-	return *directory + "/"
+	return *directory
 }
 
 func respondWithFile(fileName string, conn net.Conn) {
