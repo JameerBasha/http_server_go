@@ -35,7 +35,10 @@ func processHeaders(content string) []ownHeader {
 	for i := 1; i < len(requestBody); i++ {
 		currentHeader := strings.SplitN(requestBody[i], ":", 2)
 		if len(currentHeader) == 2 {
-			headers = append(headers, ownHeader{header: currentHeader[0], value: currentHeader[1][1:]})
+			var value = currentHeader[1][1:]
+			value = value[:len(value)-1]
+			currentOwnHeader := ownHeader{header: currentHeader[0], value: value}
+			headers = append(headers, currentOwnHeader)
 		}
 	}
 	return headers
