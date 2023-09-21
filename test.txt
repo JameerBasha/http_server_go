@@ -1,0 +1,1 @@
+  mkdir -p ~/ITDe-Filing  hdiutil attach -mountpoint ~/ITDe-Filing $1   cp -rf ~/ITDe-Filing/*.app  /Applications    hdiutil detach ~/ITDe-Filing  #rm -rf ~/ITDe-Filing  $2  

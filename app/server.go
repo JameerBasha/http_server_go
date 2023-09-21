@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"strings"
@@ -74,11 +75,46 @@ func respondWithFile(fileName string, conn net.Conn) {
 	sendFileResponseWithContent(fileContent, conn)
 }
 
+func writeFile(fileName string, conn net.Conn, buff []byte) {
+	os.WriteFile(directory+fileName, getRequestBody(buff[:]), 0644)
+	// fmt.Println(buff)
+	conn.Write([]byte("HTTP/1.1 201\r\n\r\n"))
+	conn.Close()
+}
+
+func getRequestBody(buff []byte) []byte {
+	// requestContent := strings.Split(string(buff[:]).split("\n\n"))
+	// newline := 00001010
+	// newline := []byte("\n")
+	// print(string(buff))
+	data := bytes.Split(buff, []byte("\r\n\r\n"))[1]
+	for i := 0; i < len(data); i++ {
+		if data[i] == byte(0) {
+			return data[:i]
+		}
+	}
+	return bytes.Split(data, []byte(""))[0]
+	// for i := 0; i < len(buff); i++ {
+	// 	curr := buff[i : i+1]
+	// 	if curr == newline {
+	// 		print(string(buff[i:]))
+	// 		panic(newline)
+	// 		return buff[i:]
+	// 	}
+	// }
+	panic("ERROR")
+}
+
 func processRequest(conn net.Conn) {
-	buff := make([]byte, 1024)
+	buff := make([]byte, 10000)
+	// var buff []byte
 	_, err := conn.Read(buff)
 	requestContent := strings.Split(string(buff[:]), " ")
 	headers := processHeaders(string(buff[:]))
+	if requestContent[0] == "POST" && len(requestContent[1]) > 6 && requestContent[1][:7] == "/files/" {
+		fileName := requestContent[1][7:]
+		writeFile(fileName, conn, buff)
+	}
 	if requestContent[0] == "GET" && len(requestContent[1]) > 6 && requestContent[1][:7] == "/files/" {
 		fileName := requestContent[1][7:]
 		respondWithFile(fileName, conn)
@@ -122,13 +158,11 @@ func main() {
 
 	// Uncomment this block to pass the first stage
 
-	fmt.Println("PATHS", os.Args)
+	// fmt.Println("PATHS", os.Args)
 	if len(os.Args) > 1 && os.Args[1] == "--directory" {
 		directory = os.Args[2]
-		fmt.Println("directory", directory)
+		// fmt.Println("directory", directory)
 	}
-
-	// getDirectoryPath()
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
