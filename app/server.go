@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 
 	// Uncomment this block to pass the first stage
@@ -62,8 +63,8 @@ func getDirectoryPath() {
 
 func respondWithFile(fileName string, conn net.Conn) {
 	// directory := os.Args('')
-	fmt.Println(directory)
-	fileContent, err := os.ReadFile(directory + fileName)
+	filepath := filepath.Join(directory + fileName)
+	fileContent, err := os.ReadFile(filepath)
 	if err != nil {
 		conn.Write([]byte("HTTP/1.1 404\r\n\r\n"))
 		conn.Close()
