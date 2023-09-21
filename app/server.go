@@ -19,6 +19,14 @@ func processRequest(conn net.Conn) {
 	buff := make([]byte, 1024)
 	_, err := conn.Read(buff)
 	requestContent := strings.Split(string(buff[:]), " ")
+	// fmt.Println(requestContent)
+	// fmt.Println(strings.Split(requestContent[1], "/")[1])
+	if requestContent[0] == "GET" && strings.Split(requestContent[1], "/")[1] == "echo" {
+		echoResponse := strings.Split(requestContent[1], "/")[2]
+		response := "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + fmt.Sprint(len(echoResponse)) + "\r\n\r\n" + echoResponse //+ "\r\n"
+		sendResponseAndCloseConnection(conn, response)
+		return
+	}
 	if requestContent[0] != "GET" || requestContent[1] != "/" {
 		sendResponseAndCloseConnection(conn, "HTTP/1.1 404\r\n\r\n")
 		return
