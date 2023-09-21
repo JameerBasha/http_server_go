@@ -64,7 +64,7 @@ func processRequest(conn net.Conn) {
 	_, err := conn.Read(buff)
 	requestContent := strings.Split(string(buff[:]), " ")
 	headers := processHeaders(string(buff[:]))
-	if requestContent[0] == "GET" && requestContent[1][:7] == "/files/" {
+	if requestContent[0] == "GET" && len(requestContent[1]) > 6 && requestContent[1][:7] == "/files/" {
 		fileName := requestContent[1][7:]
 		respondWithFile(fileName, conn)
 		return
