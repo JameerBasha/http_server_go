@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"strings"
@@ -45,15 +46,20 @@ func processHeaders(content string) []ownHeader {
 }
 
 func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
-	response := []byte("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + fmt.Sprint(len(fileContent)) + "\r\n\r\n")
-	// response = append(response, fileContent...)
+	response := []byte("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + fmt.Sprint(len(fileContent)) + "\r\n\r\n")
 	conn.Write(response)
 	conn.Write(fileContent)
 	conn.Close()
 }
 
+func getDirectoryPath() string {
+	directory := flag.String("directory", "", "Pass directory")
+	return *directory + "/"
+}
+
 func respondWithFile(fileName string, conn net.Conn) {
-	fileContent, err := os.ReadFile(fileName)
+	// directory := os.Args('')
+	fileContent, err := os.ReadFile(getDirectoryPath() + fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
