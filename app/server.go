@@ -52,14 +52,18 @@ func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 	conn.Close()
 }
 
-func getDirectoryPath() string {
-	directory := flag.String("directory", "", "Pass directory")
-	return *directory
+var directory string
+
+func getDirectoryPath() {
+	curr := flag.String("directory", "", "Pass directory")
+	flag.Parse()
+	directory = *curr
 }
 
 func respondWithFile(fileName string, conn net.Conn) {
 	// directory := os.Args('')
-	fileContent, err := os.ReadFile(getDirectoryPath() + fileName)
+	fmt.Println(directory)
+	fileContent, err := os.ReadFile(directory + fileName)
 	if err != nil {
 		conn.Write([]byte("HTTP/1.1 404\r\n\r\n"))
 		conn.Close()
@@ -114,6 +118,8 @@ func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 
 	// Uncomment this block to pass the first stage
+
+	getDirectoryPath()
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
