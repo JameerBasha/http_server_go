@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"path/filepath"
 	"strings"
 
 	// Uncomment this block to pass the first stage
@@ -65,8 +64,8 @@ func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
 
 func respondWithFile(fileName string, conn net.Conn) {
 	// directory := os.Args('')
-	filepath := filepath.Join(directory + fileName)
-	fileContent, err := os.ReadFile(filepath)
+	// filepath := filepath.Join(directory + fileName)
+	fileContent, err := os.ReadFile(directory + fileName)
 	if err != nil {
 		log.Fatal(err)
 		conn.Write([]byte("HTTP/1.1 404\r\n\r\n"))
@@ -123,7 +122,7 @@ func main() {
 
 	// Uncomment this block to pass the first stage
 
-	fmt.Println(os.Args)
+	fmt.Println("PATHS", os.Args)
 	if len(os.Args) > 1 && os.Args[1] == "--directory" {
 		directory = os.Args[2]
 		fmt.Println("directory", directory)
