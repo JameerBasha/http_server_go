@@ -44,11 +44,31 @@ func processHeaders(content string) []ownHeader {
 	return headers
 }
 
+func sendFileResponseWithContent(fileContent []byte, conn net.Conn) {
+	response := []byte("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + fmt.Sprint(len(fileContent)) + "\r\n\r\n")
+	response = append(response, fileContent...)
+	conn.Write(response)
+	conn.Close()
+}
+
+func respondWithFile(fileName string, conn net.Conn) {
+	fileContent, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sendFileResponseWithContent(fileContent, conn)
+}
+
 func processRequest(conn net.Conn) {
 	buff := make([]byte, 1024)
 	_, err := conn.Read(buff)
 	requestContent := strings.Split(string(buff[:]), " ")
 	headers := processHeaders(string(buff[:]))
+	if requestContent[0] == "GET" && requestContent[1][:7] == "/files/" {
+		fileName := requestContent[1][7:]
+		respondWithFile(fileName, conn)
+		return
+	}
 	if requestContent[0] == "GET" && requestContent[1] == "/user-agent" {
 		for i := 0; i < len(headers); i++ {
 			if headers[i].header == "User-Agent" {
