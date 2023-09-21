@@ -66,6 +66,7 @@ func respondWithFile(fileName string, conn net.Conn) {
 	filepath := filepath.Join(directory + fileName)
 	fileContent, err := os.ReadFile(filepath)
 	if err != nil {
+		log.Fatal(err)
 		conn.Write([]byte("HTTP/1.1 404\r\n\r\n"))
 		conn.Close()
 	}
