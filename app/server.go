@@ -22,7 +22,8 @@ func processRequest(conn net.Conn) {
 	// fmt.Println(requestContent)
 	// fmt.Println(strings.Split(requestContent[1], "/")[1])
 	if requestContent[0] == "GET" && strings.Split(requestContent[1], "/")[1] == "echo" {
-		echoResponse := strings.Split(requestContent[1], "/")[2]
+		echoResponse := requestContent[1][6:] // strings.Join(strings.Split(requestContent[1], "GET")[1:], "")
+		fmt.Println(echoResponse)
 		response := "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + fmt.Sprint(len(echoResponse)) + "\r\n\r\n" + echoResponse //+ "\r\n"
 		sendResponseAndCloseConnection(conn, response)
 		return
